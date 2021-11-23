@@ -16,7 +16,7 @@ controller_workflows:
     ask_scm_branch_on_launch: false
     ask_limit_on_launch: false
     organization: Default
-    schedules: []
+    schedules: ['Patch windows for rhel8c']
     simplified_workflow_nodes:
       - all_parents_must_converge: false
         identifier: node101
@@ -28,7 +28,7 @@ controller_workflows:
         unified_job_template: LCM patching
     notification_templates_started: []
     notification_templates_success: []
-    notification_templates_error: []
+    notification_templates_error: ['Linux team']
     notification_templates_approvals: []
     survey_spec: {}
 ...
