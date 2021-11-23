@@ -4,6 +4,6 @@ controller_labels:
     organization: Default
   - name: Prod
     organization: Default
-  - name: lcm-pod
+  - name: lcm-poc
     organization: Default
 ...
