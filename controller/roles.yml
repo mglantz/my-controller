@@ -1,14 +1,11 @@
 ---
 controller_roles:
-  - inventory: Linux servers
+  - user: automation-user
+    target_team: automation-users
+    role: member
+  - workflow: LCM workflow
     team: automation-users
-    role: use
-  # - workflow:  Test workflow 1
-  #   team: satellite-qe
-  #   role: execute
-  # - credential: test-vault-creds
-  #   team: satellite-qe
-  #   role: use
+    role: execute
   - job_template: Check if rhel8c is alive
     team: automation-users
     role: execute
