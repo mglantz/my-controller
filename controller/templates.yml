@@ -15,6 +15,28 @@ controller_templates:
     playbook: ping.yml
     verbosity: 0
 
+  - name: LCM pre-check
+    description: Prerequisites checks before patching
+    job_type: run
+    inventory: Linux servers
+    labels:
+      - patching
+    credentials: Linux admin user
+    project: lcm-poc
+    playbook: prerequisites.yml
+    verbosity: 0
+
+  - name: LCM patching
+    description: Patch system and reboot if software was updated
+    job_type: run
+    inventory: Linux servers
+    labels:
+      - patching
+    credentials: Linux admin user
+    project: lcm-poc
+    playbook: patch.yml
+    verbosity: 0
+
 # You can retrieve a job along with its survey spec using tower cli as follows:
 # tower-cli receive --job_template <Name> --user admin --format yaml
 # If you need to add Survey, Survey spec would look like given below:
