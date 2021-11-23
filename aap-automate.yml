@@ -1,0 +1,35 @@
+---
+- name: Playbook to configure ansible Controller post installation
+  hosts: localhost
+  connection: local
+  vars:
+    controller_validate_certs: false
+  collections:
+    - ansible.tower
+    - redhat_cop.controller_configuration
+  # Define following vars here, or in configs/controller_auth.yml
+  # controller_hostname: controller.example.com
+  # controller_username: admin
+  # controller_password: changeme
+  pre_tasks:
+    - name: Include vars from configs directory
+      include_vars:
+        dir: ./my-controller/controller
+        ignore_files: [controller_config.yml.template]
+        extensions: ["yml"]
+      tags:
+        - always
+
+  roles:
+    - {role: settings, when: controller_settings is defined, tags: settings}
+    - {role: organizations, when: controller_organizations is defined, tags: organizations}
+    - {role: labels, when: controller_labels is defined, tags: labels}
+    - {role: users, when: controller_user_accounts is defined, tags: users}
+    - {role: teams, when: controller_teams is defined, tags: teams}
+    - {role: credentials, when: controller_credentials is defined, tags: credentials}
+    - {role: projects, when: controller_projects is defined, tags: projects}
+    - {role: inventories, when: controller_inventories is defined, tags: inventories}
+    - {role: hosts, when: controller_hosts is defined, tags: hosts}
+    - {role: groups, when: controller_groups is defined, tags: inventories}
+    - {role: job_templates, when: controller_templates is defined, tags: job_templates}
+...
