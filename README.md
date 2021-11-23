@@ -29,6 +29,34 @@ ansible-galaxy collection install awx.awx
 ansible-galaxy collection install redhat_cop.tower_configuration
 ```
 
+5. Create script in /var/lib/awx
+```
+cat << 'EOF' >/var/lib/awx/aap-conf-sync
+#!/bin/bash
+
+(
+echo "aap-tower-sync: $(date)"
+if curl https://raw.githubusercontent.com/mglantz/my-controller/main/README.md 2>/dev/null|grep "Demo of utilizing the redhat_cop.tower_configuration" >/dev/null 2>&1
+then
+	echo "Syncronizing content to Tower."
+	cd /var/lib/awx/tower_configuration/
+	rm -rf my-controller
+	git clone https://github.com/mglantz/my-controller
+	cp my-controller/aap-automate.yml .
+	ansible-playbook ./aap-automate.yml
+else
+	echo "No internet connection."
+fi
+) >~/.aap-sync.log 2>&1
+EOF
+chmod a+rx /var/lib/awx/aap-conf-sync
+```
+
+6. Create crontab which runs script
+```
+* * * * * /var/lib/awx/aap-conf-sync
+```
+
 ## Demo
 ```
 git clone https://github.com/redhat-cop/tower_configuration
