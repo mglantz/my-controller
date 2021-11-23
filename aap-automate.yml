@@ -35,4 +35,5 @@
     - {role: notification_templates, when: controller_notifications is defined, tags: notification_templates}
     - {role: schedules, when: controller_schedules is defined, tags: schedules}
     - {role: workflow_job_templates, when: controller_workflows is defined, tags: workflow_job_templates}
+    - {role: roles, when: controller_roles is defined, tags: roles}
 ...
