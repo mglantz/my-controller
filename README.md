@@ -29,7 +29,19 @@ ansible-galaxy collection install awx.awx
 ansible-galaxy collection install redhat_cop.tower_configuration
 ```
 
-5. Create script in /var/lib/awx
+## Demo
+```
+git clone https://github.com/redhat-cop/tower_configuration
+cd tower_configuration/examples
+git clone https://github.com/my-controller
+cp my-controller/aap-automate.yml .
+# Adjust authentication
+vi my-controller/controller/controller_auth.yml
+ansible-playbook ./aap-automate.yml
+```
+
+### Demo auto sync
+1. Create script in /var/lib/awx
 ```
 cat << 'EOF' >/var/lib/awx/aap-conf-sync
 #!/bin/bash
@@ -52,20 +64,9 @@ EOF
 chmod a+rx /var/lib/awx/aap-conf-sync
 ```
 
-6. Create crontab which runs script
+2. Create crontab which runs script
 ```
 * * * * * /var/lib/awx/aap-conf-sync
-```
-
-## Demo
-```
-git clone https://github.com/redhat-cop/tower_configuration
-cd tower_configuration/examples
-git clone https://github.com/my-controller
-cp my-controller/aap-automate.yml .
-# Adjust authentication
-vi my-controller/controller/controller_auth.yml
-ansible-playbook ./aap-automate.yml
 ```
 
 ### Example
