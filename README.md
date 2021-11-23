@@ -35,7 +35,7 @@ cat << 'EOF' >/var/lib/awx/aap-conf-sync
 #!/bin/bash
 
 (
-echo "aap-tower-sync: $(date)"
+echo "aap-conf-sync: $(date)"
 if curl https://raw.githubusercontent.com/mglantz/my-controller/main/README.md 2>/dev/null|grep "Demo of utilizing the redhat_cop.tower_configuration" >/dev/null 2>&1
 then
 	echo "Syncronizing content to Tower."
