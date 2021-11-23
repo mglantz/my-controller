@@ -5,8 +5,10 @@ My Ansible Automation Platform controller
 
 Demo of utilizing the redhat_cop.tower_configuration collection (https://github.com/redhat-cop/tower_configuration) to configure Ansible Automation Platform (Tower/Controller).
 
-## Prereq
+The redhat_cop.tower_configuration collection turns post config of Tower/Controller into editing some yaml variable files and running a playbook.
+See the variable files which defines which resources to get created in https://github.com/mglantz/my-controller/tree/main/controller
 
+## Prereq
 1. Install Ansible Automation Platform Tower or Controller
 2. Install ansible-tower-cli
 ```
