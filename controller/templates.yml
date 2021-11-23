@@ -20,7 +20,7 @@ controller_templates:
     job_type: run
     inventory: Linux servers
     labels:
-      - patching
+      - lcm-poc
     credentials: Linux admin user
     project: lcm-poc
     playbook: prerequisites.yml
@@ -31,7 +31,7 @@ controller_templates:
     job_type: run
     inventory: Linux servers
     labels:
-      - patching
+      - lcm-poc
     credentials: Linux admin user
     project: lcm-poc
     playbook: patch.yml
