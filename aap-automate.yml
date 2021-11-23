@@ -32,4 +32,5 @@
     - {role: hosts, when: controller_hosts is defined, tags: hosts}
     - {role: groups, when: controller_groups is defined, tags: inventories}
     - {role: job_templates, when: controller_templates is defined, tags: job_templates}
+    - {role: workflow_job_templates, when: controller_workflows is defined, tags: workflow_job_templates}
 ...
