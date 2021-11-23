@@ -33,5 +33,6 @@
     - {role: groups, when: controller_groups is defined, tags: inventories}
     - {role: job_templates, when: controller_templates is defined, tags: job_templates}
     - {role: notification_templates, when: controller_notifications is defined, tags: notification_templates}
+    - {role: schedules, when: controller_schedules is defined, tags: schedules}
     - {role: workflow_job_templates, when: controller_workflows is defined, tags: workflow_job_templates}
 ...
