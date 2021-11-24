@@ -15,6 +15,18 @@ controller_templates:
     playbook: ping.yml
     verbosity: 0
 
+  - name: Login to rhel8c
+    description: Login to rhel8c and see if a command returns output
+    job_type: run
+    inventory: Linux servers
+    labels:
+      - Prod
+    credentials: Linux admin user
+    project: Linux team playbooks
+    playbook: ping.yml
+    verbosity: 0
+
+
   - name: LCM pre-check
     description: Prerequisites checks before patching
     job_type: run
