@@ -32,9 +32,9 @@ jobs:
       # Ansible linting
       - name: Run Ansible linting on playbook
         run: ansible-lint /home/runner/work/my-controller/my-controller/aap-automate.yml
-        
+          
       # Yaml linting
       - name: Run YAML linting on config
         run: |
-        cd /home/runner/work/my-controller/my-controller/controller
-        for item in $(ls *.yml); do yamllint $item; done
+          cd /home/runner/work/my-controller/my-controller/controller
+          for item in $(ls *.yml); do yamllint $item; done
