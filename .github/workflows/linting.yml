@@ -25,9 +25,9 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
 
-      # Install ansible tooling
+      # Install tooling
       - name: Install Ansible tooling
-        run: pip install ansible
+        run: pip install ansible ansible-lint yamllint
 
       # Ansible linting
       - name: Run Ansible linting on playbook
