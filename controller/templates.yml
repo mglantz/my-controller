@@ -48,23 +48,4 @@ controller_templates:
     project: lcm-poc
     playbook: patch.yml
     verbosity: 0
-
-# You can retrieve a job along with its survey spec using tower cli as follows:
-# tower-cli receive --job_template <Name> --user admin --format yaml
-# If you need to add Survey, Survey spec would look like given below:
-# survey_spec:
-#   name: ''
-#   description: ''
-#   spec:
-#   - question_name: Target Host
-#     question_description: target host is required for playbook to work, this host
-#       needs to exist in the inventory
-#     required: true
-#     type: text
-#     variable: target_hosts
-#     min: 0
-#     max: 1024
-#     default: infra-ansible-tower-testing.infra.sat.rdu2.redhat.com
-#     choices: ''
-#     new_question: true
 ...
