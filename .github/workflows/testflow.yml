@@ -27,7 +27,7 @@ jobs:
 
       # Install tooling
       - name: Install Ansible tooling
-        run: pip install ansible ansible-galaxy ansible-lint yamllint
+        run: pip install ansible ansible-lint yamllint
         
       # Install collections
       - name: Install dependant collections
