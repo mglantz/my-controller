@@ -14,7 +14,7 @@
   pre_tasks:
     - name: Include vars from configs directory
       include_vars:
-        dir: ./my-controller/controller
+        dir: ./controller
         ignore_files: [controller_config.yml.template]
         extensions: ["yml"]
       tags:
