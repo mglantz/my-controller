@@ -8,7 +8,7 @@ Demo of utilizing the redhat_cop.tower_configuration collection (https://github.
 The redhat_cop.tower_configuration collection turns post config of Tower/Controller into editing some yaml variable files and running a playbook.
 See the variable files which defines which resources to get created in https://github.com/mglantz/my-controller/tree/main/controller
 
-## Prereq
+## Prereq (on your Tower/Controller or a bastion type host)
 1. Install Ansible Automation Platform Tower or Controller
 2. Install ansible-tower-cli
 ```
@@ -31,12 +31,9 @@ ansible-galaxy collection install redhat_cop.tower_configuration
 
 ## Demo
 ```
-git clone https://github.com/redhat-cop/tower_configuration
-cd tower_configuration/examples
 git clone https://github.com/my-controller
-cp my-controller/aap-automate.yml .
-# Adjust authentication
 vi my-controller/controller/controller_auth.yml
+cd my-controller
 ansible-playbook ./aap-automate.yml
 ```
 
@@ -47,14 +44,17 @@ cat << 'EOF' >/var/lib/awx/aap-conf-sync
 #!/bin/bash
 
 (
-echo "aap-conf-sync: $(date)"
+echo "aap-tower-sync: $(date)"
 if curl https://raw.githubusercontent.com/mglantz/my-controller/main/README.md 2>/dev/null|grep "Demo of utilizing the redhat_cop.tower_configuration" >/dev/null 2>&1
 then
 	echo "Syncronizing content to Tower."
-	cd /var/lib/awx/tower_configuration/
-	rm -rf my-controller
+	cd /var/lib/awx
+	if [ -d my-controller ]
+	then
+		rm -rf my-controller
+	fi
 	git clone https://github.com/mglantz/my-controller
-	cp my-controller/aap-automate.yml .
+	cd my-controller
 	ansible-playbook ./aap-automate.yml
 else
 	echo "No internet connection."
@@ -66,6 +66,9 @@ chmod a+rx /var/lib/awx/aap-conf-sync
 
 2. Create crontab which runs script
 ```
+crontab -e
+
+# Input below to sync once a minute
 * * * * * /var/lib/awx/aap-conf-sync
 ```
 
