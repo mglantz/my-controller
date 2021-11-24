@@ -27,7 +27,13 @@ jobs:
 
       # Install tooling
       - name: Install Ansible tooling
-        run: pip install ansible ansible-lint yamllint
+        run: pip install ansible ansible-galaxy ansible-lint yamllint
+        
+      # Install collections
+      - name: Install dependant collections
+        run: |
+          ansible-galaxy collection install awx.awx
+          ansible-galaxy collection install redhat_cop.controller_configuration
 
       # Ansible linting
       - name: Run Ansible linting on playbook
