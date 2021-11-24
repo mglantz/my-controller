@@ -1,5 +1,4 @@
 ---
-# Test
 - name: Playbook to configure ansible Controller post installation
   hosts: localhost
   connection: local
@@ -8,10 +7,6 @@
   collections:
     - ansible.tower
     - redhat_cop.controller_configuration
-  # Define following vars here, or in configs/controller_auth.yml
-  # controller_hostname: controller.example.com
-  # controller_username: admin
-  # controller_password: changeme
   pre_tasks:
     - name: Include vars from configs directory
       include_vars:
