@@ -22,7 +22,22 @@ Create ~/.tower_cli.cfg as follows:
 verify_ssl = false
 oauth_token = alongerstringgoeshere
 ```
-4. Install collections used
+
+4. Setup connection to Automation Hub. First, fetch your access token here: https://console.redhat.com/ansible/automation-hub/token/ - then edit /etc/ansible/ansible.cfg to read:
+```
+[galaxy]
+server_list = automation_hub, release_galaxy
+
+[galaxy_server.release_galaxy]
+url=https://galaxy.ansible.com/
+
+[galaxy_server.automation_hub]
+url=https://cloud.redhat.com/api/automation-hub/ 
+auth_url=https://sso.redhat.com/auth/realms/redhat-external/protocol/openid-connect/token
+
+token="yourtoken"
+```
+5. Install collections used
 ```
 ansible-galaxy collection install ansible.tower
 ansible-galaxy collection install awx.awx
@@ -33,8 +48,6 @@ ansible-galaxy collection install redhat_cop.tower_configuration
 ```
 git clone https://github.com/my-controller
 vi my-controller/controller/controller_auth.yml
-cd my-controller
-ansible-playbook ./aap-automate.yml
 ```
 
 ### Demo auto sync
