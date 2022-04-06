@@ -42,11 +42,14 @@
       set_fact:
         schedules_onoff: true
       when: "{{ lookup('dig', item.www.sunet.se) }} == {{ ansible_default_ipv4.address }}"
+      ignore_errors: yes
+
 
     - name: Set schedules to be disabled if we are the passive cluster
       set_fact:
         schedules_onoff: false
       when: "{{ lookup('dig', item.www.sunet.se) }} != {{ ansible_default_ipv4.address }}"
+      ignore_errors: yes
 
     - name: Include schedules role
       include_role:
