@@ -7,7 +7,7 @@
     controller_validate_certs: false
   collections:
 #    - ansible.tower
-    - redhat_cop.controller_configuration
+    - ansible.controller
   # Define following vars here, or in configs/controller_auth.yml
   # controller_hostname: controller.example.com
   # controller_username: admin
