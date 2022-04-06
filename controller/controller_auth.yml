@@ -1,7 +1,7 @@
 # User may add tower auth creds to this file
 # and encrypt it using `ansible-vault`
 ---
-controller_hostname: tower1.sudo.net
+controller_hostname: aap21.sudo.net
 controller_username: admin
 controller_password: redhat123
 controller_validate_certs: false
