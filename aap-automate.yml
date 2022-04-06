@@ -41,12 +41,12 @@
     - name: Enable schedules if we are the active cluster
       set_fact:
         schedules_onoff: true
-      when: "{{ lookup('dig', item.aap21.sudo.net) }} == {{ ansible_default_ipv4.address }}"
+      when: "{{ lookup('dig', item.www.sunet.se) }} == {{ ansible_default_ipv4.address }}"
 
     - name: Disable schedules if we are the passive cluster
       set_fact:
         schedules_onoff: false
-      when: "{{ lookup('dig', item.aap21.sudo.net) }} != {{ ansible_default_ipv4.address }}"
+      when: "{{ lookup('dig', item.www.sunet.se) }} != {{ ansible_default_ipv4.address }}"
 
 #  tasks:
 #    - name: Add Controller Settings Individually
