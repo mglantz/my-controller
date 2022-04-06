@@ -34,19 +34,25 @@
     - {role: groups, when: controller_groups is defined, tags: inventories}
     - {role: job_templates, when: controller_templates is defined, tags: job_templates}
     - {role: notification_templates, when: controller_notifications is defined, tags: notification_templates}
-    - {role: schedules, when: controller_schedules is defined, tags: schedules}
+      #    - {role: schedules, when: controller_schedules is defined, tags: schedules}
     - {role: workflow_job_templates, when: controller_workflows is defined, tags: workflow_job_templates}
     - {role: roles, when: controller_roles is defined, tags: roles}
   tasks:
-    - name: Enable schedules if we are the active cluster
+    - name: Set schedules to be enabled if we are the active cluster
       set_fact:
         schedules_onoff: true
       when: "{{ lookup('dig', item.www.sunet.se) }} == {{ ansible_default_ipv4.address }}"
 
-    - name: Disable schedules if we are the passive cluster
+    - name: Set schedules to be disabled if we are the passive cluster
       set_fact:
         schedules_onoff: false
       when: "{{ lookup('dig', item.www.sunet.se) }} != {{ ansible_default_ipv4.address }}"
+
+    - name: Include schedules role
+      include_role:
+        name: schedules
+      when: controller_schedules is defined
+      tags: schedules
 
 #  tasks:
 #    - name: Add Controller Settings Individually
