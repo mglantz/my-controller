@@ -39,7 +39,7 @@
     - {role: roles, when: controller_roles is defined, tags: roles}
   tasks:
     - name: Find out if we are the active cluster
-      shell: "dig {{ loadbalance_address }} | grep -q {{ ansible_default_ipv4.address }}" 
+      shell: "dig {{ loadbalance_address }} | grep -q $(hostname -I | awk '{print $1}')" 
       register: active_cluster
 
     - name: Set schedules to be enabled if we are the active cluster
