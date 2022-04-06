@@ -1,143 +1,147 @@
-# my-controller
-My Ansible Automation Platform controller
+# Red Hat Communities of Practice Controller Configuration Collection
 
-## Description
+![Ansible Lint](https://github.com/redhat-cop/controller_configuration/workflows/Ansible%20Lint/badge.svg)
+![Galaxy Release](https://github.com/redhat-cop/controller_configuration/workflows/galaxy-release/badge.svg)
+<!-- Further CI badges go here as above -->
 
-Demo of utilizing the redhat_cop.tower_configuration collection (https://github.com/redhat-cop/tower_configuration) to configure Ansible Automation Platform (Tower/Controller).
+This Ansible collection allows for easy interaction with an AWX or Ansible Controller server via Ansible roles using the AWX/Controller collection modules.
 
-The redhat_cop.tower_configuration collection turns post config of Tower/Controller into editing some yaml variable files and running a playbook.
-See the variable files which defines which resources to get created in https://github.com/mglantz/my-controller/tree/main/controller
+## REQUIREMENTS
 
-## Prereq (on your Tower/Controller or a bastion type host)
-1. Install Ansible Automation Platform Tower or Controller
-2. Install ansible-tower-cli
+The AWX.AWX OR ANSIBLE.CONTROLLER collections MUST be installed in order for this collection to work. It is recommended they be invoked in the playbook in the following way.
+
+```yaml
+---
+- name: Playbook to configure ansible controller post installation
+  hosts: localhost
+  connection: local
+  vars:
+    controller_validate_certs: false
+  collections:
+    - awx.awx
 ```
-dnf config-manager --add-repo https://releases.ansible.com/ansible-tower/cli/ansible-tower-cli-el8.repo
-dnf install ansible-tower-cli
+
+## Included content
+
+Click the `Content` button to see the list of content included in this collection.
+
+## Installing this collection
+
+You can install the redhat_cop controller_configuration collection with the Ansible Galaxy CLI:
+
+```console
+ansible-galaxy collection install redhat_cop.controller_configuration
 ```
-3. Setup authentication for the awx cli tool.
-Create ~/.tower_cli.cfg as follows:
+
+You can also include it in a `requirements.yml` file and install it with `ansible-galaxy collection install -r requirements.yml`, using the format:
+
+```yaml
+---
+collections:
+  - name: redhat_cop.controller_configuration
+    # If you need a specific version of the collection, you can specify like this:
+    # version: ...
 ```
+
+## Conversion from tower_configuration
+
+If you were using a version of redhat_cop.tower_configuration, please refer to our Conversion Guide here: [Conversion Guide](docs/CONVERSION_GUIDE.md)
+
+## Using this collection
+
+The awx.awx or ansible.controller collection must be invoked in the playbook in order for ansible to pick up the correct modules to use.
+
+The following command will invoke the playbook with the awx collection
+
+```console
+ansible-playbook redhat_cop.controller_configuration.configure_awx.yml
+```
+
+The following command will invoke the playbook with the ansible.controller collection
+
+```console
+ansible-playbook redhat_cop.controller_configuration.configure_controller.yml
+```
+
+Otherwise it will look for the modules only in your base installation. If there are errors complaining about "couldn't resolve module/action" this is the most likely cause.
+
+```yaml
+- name: Playbook to configure ansible controller post installation
+  hosts: localhost
+  connection: local
+  vars:
+    controller_validate_certs: false
+  collections:
+    - awx.awx
+```
+
+Define following vars here, or in `controller_configs/controller_auth.yml`
+`controller_hostname: ansible-controller-web-svc-test-project.example.com`
+
+You can also specify authentication by a combination of either:
+
+- `controller_hostname`, `controller_username`, `controller_password`
+- `controller_hostname`, `controller_oauthtoken`
+
+The OAuth2 token is the preferred method. You can obtain the token through the preferred `controller_token` module, or through the
+AWX CLI [login](https://docs.ansible.com/automation-controller/latest/html/controllercli/authentication.html)
+command.
+
+These can be specified via (from highest to lowest precedence):
+
+- direct role variables as mentioned above
+- environment variables (most useful when running against localhost)
+- a config file path specified by the `controller_config_file` parameter
+- a config file at `~/.controller_cli.cfg`
+- a config file at `/etc/controller/controller_cli.cfg`
+
+Config file syntax looks like this:
+
+```ini
 [general]
-verify_ssl = false
-oauth_token = alongerstringgoeshere
+host = https://localhost:8043
+verify_ssl = true
+oauth_token = LEdCpKVKc4znzffcpQL5vLG8oyeku6
 ```
 
-4. Setup connection to Automation Hub. First, fetch your access token here: https://console.redhat.com/ansible/automation-hub/token/ - then edit /etc/ansible/ansible.cfg to read:
-```
-[galaxy]
-server_list = automation_hub, release_galaxy
+Controller token module would be invoked with this code:
 
-[galaxy_server.release_galaxy]
-url=https://galaxy.ansible.com/
+```yaml
+    - name: Create a new token using controller username/password
+      awx.awx.token:
+        description: 'Creating token to test controller jobs'
+        scope: "write"
+        state: present
+        controller_host: "{{ controller_hostname }}"
+        controller_username: "{{ controller_username }}"
+        controller_password: "{{ controller_password }}"
 
-[galaxy_server.automation_hub]
-url=https://cloud.redhat.com/api/automation-hub/ 
-auth_url=https://sso.redhat.com/auth/realms/redhat-external/protocol/openid-connect/token
-
-token="yourtoken"
-```
-5. Install collections used
-```
-ansible-galaxy collection install ansible.tower
-ansible-galaxy collection install awx.awx
-ansible-galaxy collection install redhat_cop.tower_configuration
 ```
 
-## Demo
-```
-git clone https://github.com/my-controller
-vi my-controller/controller/controller_auth.yml
-```
+### Controller Export
 
-### Demo auto sync
-1. Create script in /var/lib/awx
-```
-cat << 'EOF' >/var/lib/awx/aap-conf-sync
-#!/bin/bash
+The awx command line can export json that is compatible with this collection.
+More details can be found [here](examples/configs_export_model/README.md)
 
-(
-echo "aap-tower-sync: $(date)"
-if curl https://raw.githubusercontent.com/mglantz/my-controller/main/README.md 2>/dev/null|grep "Demo of utilizing the redhat_cop.tower_configuration" >/dev/null 2>&1
-then
-	echo "Syncronizing content to Tower."
-	cd /var/lib/awx
-	if [ -d my-controller ]
-	then
-		rm -rf my-controller
-	fi
-	git clone https://github.com/mglantz/my-controller
-	cd my-controller
-	ansible-playbook ./aap-automate.yml
-else
-	echo "No internet connection."
-fi
-) >~/.aap-sync.log 2>&1
-EOF
-chmod a+rx /var/lib/awx/aap-conf-sync
-```
+### See Also
 
-2. Create crontab which runs script
-```
-crontab -e
+- [Ansible Using collections](https://docs.ansible.com/ansible/latest/user_guide/collections_using.html) for more details.
 
-# Input below to sync once a minute
-* * * * * /var/lib/awx/aap-conf-sync
-```
+## Release and Upgrade Notes
 
-### Example
-```
-$ ansible-playbook ./aap-automate.yml
-[WARNING]: provided hosts list is empty, only localhost is available. Note that the implicit localhost does not match 'all'
+For details on changes between versions, please see [the changelog for this collection](CHANGELOG.rst).
 
-PLAY [Playbook to configure ansible Controller post installation] ****************************************************************************************************************************************************************************
+## Roadmap
 
-TASK [Gathering Facts] ***********************************************************************************************************************************************************************************************************************
-ok: [localhost]
+Adding the ability to use direct output from the awx export command in the roles along with the current data model.
 
-TASK [Include vars from configs directory] ***************************************************************************************************************************************************************************************************
-ok: [localhost]
+## Contributing to this collection
 
-TASK [redhat_cop.controller_configuration.settings : Update Ansible Controller Settings from dictionary or list of dictionaries] *************************************************************************************************************
+We welcome community contributions to this collection. If you find problems, please open an issue or create a PR against the [Controller Configuration collection repository](https://github.com/redhat-cop/controller_configuration).
+More information about contributing can be found in our [Contribution Guidelines.](https://github.com/redhat-cop/controller_configuration/blob/devel/.github/CONTRIBUTING.md)
 
-TASK [redhat_cop.controller_configuration.organizations : Add organizations] *****************************************************************************************************************************************************************
-ok: [localhost] => (item={'name': 'Default'})
-[WARNING]: You are using the awx version of this collection but connecting to Red Hat Ansible Tower
+## Licensing
 
-TASK [redhat_cop.controller_configuration.labels : Add a label to Controller] ****************************************************************************************************************************************************************
-ok: [localhost] => (item={'name': 'Dev', 'organization': 'Default'})
-ok: [localhost] => (item={'name': 'Prod', 'organization': 'Default'})
+GNU General Public License v3.0 or later.
 
-TASK [redhat_cop.controller_configuration.users : Add controller user] ***********************************************************************************************************************************************************************
-changed: [localhost] => (item={'user': 'automation_user', 'is_superuser': False, 'password': 'redhat123'})
-[WARNING]: The field password of user 2 has encrypted data and may inaccurately report task is changed.
-
-TASK [redhat_cop.controller_configuration.teams : Create Ansible Controller Team] ************************************************************************************************************************************************************
-ok: [localhost] => (item={'name': 'automation-users', 'organization': 'Default'})
-
-TASK [redhat_cop.controller_configuration.credentials : Add Credentials] *********************************************************************************************************************************************************************
-changed: [localhost] => (item=None)
-changed: [localhost]
-
-TASK [redhat_cop.controller_configuration.projects : Add Projects] ***************************************************************************************************************************************************************************
-changed: [localhost] => (item={'name': 'Linux team playbooks', 'scm_type': 'git', 'scm_url': 'https://github.com/mglantz/ansible-playbooks', 'scm_branch': 'master', 'scm_clean': True, 'description': "The Linux team's playbooks", 'organization': 'Default', 'wait': True, 'update': True})
-
-TASK [redhat_cop.controller_configuration.inventories : Create inventory] ********************************************************************************************************************************************************************
-changed: [localhost] => (item={'name': 'localhost', 'description': 'inventory for localhost', 'organization': 'Default'})
-changed: [localhost] => (item={'name': 'Linux servers', 'description': 'Linux servers', 'organization': 'Default'})
-
-TASK [redhat_cop.controller_configuration.hosts : Add Controller host] ***********************************************************************************************************************************************************************
-changed: [localhost] => (item={'name': 'localhost', 'inventory': 'localhost', 'variables': {'some_var': 'some_val', 'ansible_connection': 'local'}})
-changed: [localhost] => (item={'name': 'rhel8c.sudo.net', 'inventory': 'Linux servers', 'variables': {'some_var': 'some_val'}})
-
-TASK [redhat_cop.controller_configuration.groups : Add controller group] *********************************************************************************************************************************************************************
-changed: [localhost] => (item={'name': 'rhel8', 'inventory': 'Linux servers', 'variables': {'some_var': 'some_val'}, 'hosts': ['rhel8c.sudo.net']})
-
-TASK [redhat_cop.controller_configuration.job_templates : Add Controller Job Templates] ******************************************************************************************************************************************************
-changed: [localhost] => (item={'name': 'Check if rhel8c is alive', 'description': 'Login to rhel8c and see if a command returns output', 'job_type': 'run', 'inventory': 'Linux servers', 'labels': ['Prod'], 'credentials': 'Linux admin user', 'project': 'Linux team playbooks', 'playbook': 'ping.yml', 'verbosity': 0})
-
-PLAY RECAP ***********************************************************************************************************************************************************************************************************************************
-localhost                  : ok=12   changed=7    unreachable=0    failed=0    skipped=1    rescued=0    ignored=0   
-
-$
-```
+See [LICENSE](https://www.gnu.org/licenses/gpl-3.0.txt) to see the full text.
