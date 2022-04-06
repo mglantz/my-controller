@@ -38,10 +38,10 @@
     - {role: workflow_job_templates, when: controller_workflows is defined, tags: workflow_job_templates}
     - {role: roles, when: controller_roles is defined, tags: roles}
 
-  tasks:
-    - name: Add Controller Settings Individually
-      include_role:
-        name: settings
-      vars:
-        controller_settings: "{{ controller_settings_individuale }}"
+#  tasks:
+#    - name: Add Controller Settings Individually
+#      include_role:
+#        name: settings
+#      vars:
+#        controller_settings: "{{ controller_settings_individuale }}"
 ...
