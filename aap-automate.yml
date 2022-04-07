@@ -38,23 +38,6 @@
     - {role: workflow_job_templates, when: controller_workflows is defined, tags: workflow_job_templates}
     - {role: roles, when: controller_roles is defined, tags: roles}
   tasks:
-    - name: Find out if we are the active cluster
-      shell: "dig {{ loadbalance_address }} | grep -q $(hostname -I | awk '{print $1}')" 
-      register: active_cluster
-
-    - name: Set schedules to be enabled if we are the active cluster
-      set_fact:
-        schedules_onoff: true
-      when: active_cluster.rc == 0
-      ignore_errors: yes
-
-
-    - name: Set schedules to be disabled if we are the passive cluster
-      set_fact:
-        schedules_onoff: false
-      when: active_cluster.rc == 1
-      ignore_errors: yes
-
     - name: Include schedules role
       include_role:
         name: schedules
